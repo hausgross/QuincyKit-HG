@@ -263,7 +263,12 @@ NSString *BWQuincyLocalize(NSString *stringToken) {
   NSData *plist = [NSPropertyListSerialization dataFromPropertyList:(id)rootObj
                                                              format:NSPropertyListBinaryFormat_v1_0
                                                    errorDescription:&errorString];
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    _crashesDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"/crashes/"];
+    
   if (plist) {
+      _settingsFile = [_crashesDir stringByAppendingPathComponent:@"quincykit.settings"];
     [plist writeToFile:_settingsFile atomically:YES];
   } else {
     BWQuincyLog(@"ERROR: Writing settings. %@", errorString);
@@ -636,6 +641,9 @@ NSString *BWQuincyLocalize(NSString *stringToken) {
 - (BOOL)hasPendingCrashReport {
   if (!_crashReportActivated) return NO;
   
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    _crashesDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"/crashes/"];
+    
   if ([_fileManager fileExistsAtPath:_crashesDir]) {
     NSString *file = nil;
     NSError *error = NULL;
